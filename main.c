@@ -60,11 +60,40 @@ static void setupHardware(void)
 {
   // TODO: Put hardware configuration and initialisation in here
 
+  //Init GPIO:
+  SYSCTL_RCGC2_R = 0b00100010;
+  int dummy = SYSCTL_RCGC2_R;
+  GPIO_PORTF_DIR_R = 0xE; //Set gr�n, gul og r�d LED pins til output
+  GPIO_PORTF_DEN_R = 0xE; // enable digital pins
+  GPIO_PORTF_DATA_R = 0b0000;
+
+  initADC();
+
   // Warning: If you do not initialize the hardware clock, the timings will be inaccurate
-  //init_systick();
+  init_systick();
 }
 
+void readADC(void *p)
+{
+    while(1){
+        volatile static uint32_t Result = 0; //ADC Result
+        ADC1_PSSI_R = 0x0008; // initiate SS3 (sample sequencer 3)
+        while((ADC1_RIS_R&0x08)==0){}; //wait for conversion done
 
+        Result = ADC1_SSFIFO3_R; //Read ADC and add it to Result
+        if(Result<1365){
+            GPIO_PORTF_DATA_R = 0b0110;
+        }
+
+        if(Result>1366&&Result<2729) {
+            GPIO_PORTF_DATA_R = 0b1010;
+        }
+
+        if(Result>4000) {
+            GPIO_PORTF_DATA_R = 0b1100;
+        }
+    }
+}
 
 int main(void)
 /*****************************************************************************
@@ -77,43 +106,15 @@ int main(void)
 
     // Start the tasks.
     // ----------------
+    xTaskCreate(readADC, (signed char*) "readADC", 512, NULL, 1, NULL);
 
     // Start the scheduler.
     // --------------------
-    //vTaskStartScheduler();
+    vTaskStartScheduler();
 
     // Will only get here, if there was insufficient memory.
     // -----------------------------------------------------
 
-    SYSCTL_RCGC2_R = 0b00100010;
-    int dummy = SYSCTL_RCGC2_R;
-    GPIO_PORTF_DIR_R = 0xE; //Set gr�n, gul og r�d LED pins til output
-    GPIO_PORTF_DEN_R = 0xE; // enable digital pins
-    GPIO_PORTF_DATA_R = 0b0000;
-
-    initADC();
-
-    while(1){
-    volatile static uint32_t Result = 0; //ADC Result
-    ADC1_PSSI_R = 0x0008; // initiate SS3 (sample sequencer 3)
-    while((ADC1_RIS_R&0x08)==0){}; //wait for conversion done
-
-    Result = ADC1_SSFIFO3_R; //Read ADC and add it to Result
-    if(Result<1365){
-    GPIO_PORTF_DATA_R = 0b0110;
-
-    }
-
-    if(Result>1366&&Result<2729) {
-    GPIO_PORTF_DATA_R = 0b1010;
-
-    }
-
-    if(Result>4000) {
-    GPIO_PORTF_DATA_R = 0b1100;
-
-    }
-    }
   return 1;
 }
 
