@@ -24,6 +24,7 @@
 #include "systick_frt.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "adc.h"
 
 /*****************************    Defines    *******************************/
 #define USERTASK_STACK_SIZE configMINIMAL_STACK_SIZE
@@ -71,6 +72,38 @@ int main(void)
 *   Output   :
 *   Function : The super loop.
 ******************************************************************************/
+{
+    SYSCTL_RCGC2_R = 0b00100010;
+    int dummy = SYSCTL_RCGC2_R;
+    GPIO_PORTF_DIR_R = 0xE; //Set grøn, gul og rød LED pins til output
+    GPIO_PORTF_DEN_R = 0xE; // enable digital pins
+    GPIO_PORTF_DATA_R = 0b0000;
+
+volatile static uint32_t Result = 0; //ADC Result
+initADC();
+ADC1_PSSI_R = 0x0008; // initiate SS3 (sample sequencer 3)
+while((ADC1_RIS_R&0x08)==0){}; //wait for conversion done
+
+Result = ADC1_SSFIFO3_R; //Read ADC and add it to Result
+if(Result<1365){
+    GPIO_PORTF_DATA_R = 0b0110;
+
+}
+
+if(Result>1366&&Result<2729) {
+    GPIO_PORTF_DATA_R = 0b1010;
+
+}
+
+if(Result>4000) {
+    GPIO_PORTF_DATA_R = 0b1100;
+
+}
+
+}
+
+
+
 {
   setupHardware();
 
