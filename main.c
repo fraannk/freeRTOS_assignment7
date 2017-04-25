@@ -26,6 +26,8 @@
 #include "task.h"
 #include "adc.h"
 #include "gpio.h"
+#include "lcd.h"
+#include "numpad.h"
 
 /*****************************    Defines    *******************************/
 #define USERTASK_STACK_SIZE configMINIMAL_STACK_SIZE
@@ -62,6 +64,8 @@ static void setupHardware(void)
     // TODO: Put hardware configuration and initialisation in here
     initGPIO();
     initADC();
+    initLCD();
+    initNumpad();
 
     // Warning: If you do not initialize the hardware clock, the timings will be inaccurate
     init_systick();
@@ -78,7 +82,11 @@ int main(void)
 
     // Start the tasks.
     // ----------------
-    xTaskCreate(readADC, (signed char*) "readADC", 512, NULL, 1, NULL);
+    xTaskCreate(readADC, (signed char*) "readADC", 512, NULL, HIGH_PRIO, NULL);
+    xTaskCreate(readNumpad, (signed char*) "readNumpad", 512, NULL, LOW_PRIO, NULL);
+    //xTaskCreate(addNumbers, (signed char*) "addNumbers", 512, NULL, LOW_PRIO, NULL);
+    //xTaskCreate(makeUI, (signed char*) "makeUI", 512, NULL, LOW_PRIO, NULL);
+    xTaskCreate(dispLCD, (signed char*) "dispLCD", 512, NULL, LOW_PRIO, NULL);
 
     // Start the scheduler.
     // --------------------
