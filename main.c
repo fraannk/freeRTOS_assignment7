@@ -61,7 +61,7 @@ static void setupHardware(void)
   // TODO: Put hardware configuration and initialisation in here
 
   // Warning: If you do not initialize the hardware clock, the timings will be inaccurate
-  init_systick();
+  //init_systick();
 }
 
 
@@ -73,49 +73,47 @@ int main(void)
 *   Function : The super loop.
 ******************************************************************************/
 {
+    setupHardware();
+
+    // Start the tasks.
+    // ----------------
+
+    // Start the scheduler.
+    // --------------------
+    //vTaskStartScheduler();
+
+    // Will only get here, if there was insufficient memory.
+    // -----------------------------------------------------
+
     SYSCTL_RCGC2_R = 0b00100010;
     int dummy = SYSCTL_RCGC2_R;
-    GPIO_PORTF_DIR_R = 0xE; //Set grøn, gul og rød LED pins til output
+    GPIO_PORTF_DIR_R = 0xE; //Set grï¿½n, gul og rï¿½d LED pins til output
     GPIO_PORTF_DEN_R = 0xE; // enable digital pins
     GPIO_PORTF_DATA_R = 0b0000;
 
-volatile static uint32_t Result = 0; //ADC Result
-initADC();
-ADC1_PSSI_R = 0x0008; // initiate SS3 (sample sequencer 3)
-while((ADC1_RIS_R&0x08)==0){}; //wait for conversion done
+    initADC();
 
-Result = ADC1_SSFIFO3_R; //Read ADC and add it to Result
-if(Result<1365){
+    while(1){
+    volatile static uint32_t Result = 0; //ADC Result
+    ADC1_PSSI_R = 0x0008; // initiate SS3 (sample sequencer 3)
+    while((ADC1_RIS_R&0x08)==0){}; //wait for conversion done
+
+    Result = ADC1_SSFIFO3_R; //Read ADC and add it to Result
+    if(Result<1365){
     GPIO_PORTF_DATA_R = 0b0110;
 
-}
+    }
 
-if(Result>1366&&Result<2729) {
+    if(Result>1366&&Result<2729) {
     GPIO_PORTF_DATA_R = 0b1010;
 
-}
+    }
 
-if(Result>4000) {
+    if(Result>4000) {
     GPIO_PORTF_DATA_R = 0b1100;
 
-}
-
-}
-
-
-
-{
-  setupHardware();
-
-  // Start the tasks.
-  // ----------------
-
-  // Start the scheduler.
-  // --------------------
-  vTaskStartScheduler();
-
-  // Will only get here, if there was insufficient memory.
-  // -----------------------------------------------------
+    }
+    }
   return 1;
 }
 

@@ -8,7 +8,7 @@
 #include "tm4c123gh6pm.h"
 #include "adc.h"
 
-void initADC(){
+void initADC(void){
 
        SYSCTL_RCGC0_R |= 0x20000; // Enable ADC Clock
        GPIO_PORTB_AFSEL_R = 0x20;
