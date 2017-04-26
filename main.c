@@ -64,7 +64,7 @@ static void setupHardware(void)
     // TODO: Put hardware configuration and initialisation in here
     initGPIO();
     initADC();
-    initLCD();
+    //initLCD();
     //initNumpad();
 
     // Warning: If you do not initialize the hardware clock, the timings will be inaccurate
@@ -83,10 +83,10 @@ int main(void)
     // Start the tasks.
     // ----------------
     xTaskCreate(readADC, (signed char*) "readADC", USERTASK_STACK_SIZE, NULL, HIGH_PRIO, NULL);
-    xTaskCreate(readNumpad, (signed char*) "readNumpad", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
+    //xTaskCreate(readNumpad, (signed char*) "readNumpad", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
     //xTaskCreate(addNumbers, (signed char*) "addNumbers", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
     //xTaskCreate(makeUI, (signed char*) "makeUI", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
-    xTaskCreate(dispLCD, (signed char*) "dispLCD", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
+    //xTaskCreate(dispLCD, (signed char*) "dispLCD", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
 
     // Start the scheduler.
     // --------------------
