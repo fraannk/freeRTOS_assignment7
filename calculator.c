@@ -13,6 +13,8 @@
 
 INT8U result;
 
+/*
 void calculator(){
     result = (AdcOutput + offsetValue) * scalefactor;
 }
+*/
