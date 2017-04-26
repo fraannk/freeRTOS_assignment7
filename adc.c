@@ -23,20 +23,17 @@ void initADC(void) {
 
 void readADC(void *p) {
     while(1){
-        volatile static uint32_t Result = 0; //ADC Result
+        volatile static uint32_t result = 0; //ADC Result
         ADC1_PSSI_R = 0x0008; // initiate SS3 (sample sequencer 3)
         while((ADC1_RIS_R&0x08)==0){}; //wait for conversion done
 
-        Result = ADC1_SSFIFO3_R; //Read ADC and add it to Result
-        if(Result<1365){
+        result = ADC1_SSFIFO3_R; //Read ADC and add it to result
+
+        if(result<1365){
             GPIO_PORTF_DATA_R = 0b0110;
-        }
-
-        if(Result>1366&&Result<2729) {
+        } else if(result>1366 && result<2729) {
             GPIO_PORTF_DATA_R = 0b1010;
-        }
-
-        if(Result>4000) {
+        } else if(result>2730) {
             GPIO_PORTF_DATA_R = 0b1100;
         }
     }
