@@ -27,7 +27,7 @@
 #include "adc.h"
 #include "gpio.h"
 #include "lcd.h"
-#include "numpad.h"
+#include "key.h"
 
 /*****************************    Defines    *******************************/
 #define USERTASK_STACK_SIZE configMINIMAL_STACK_SIZE
@@ -83,7 +83,7 @@ int main(void)
     // Start the tasks.
     // ----------------
     xTaskCreate(readADC, (signed char*) "readADC", USERTASK_STACK_SIZE, NULL, HIGH_PRIO, NULL);
-    //xTaskCreate(readNumpad, (signed char*) "readNumpad", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
+    //xTaskCreate(readKey, (signed char*) "readKey", USERTASK_STACK_SIZE, NULL, HIGH_PRIO, NULL);
     //xTaskCreate(addNumbers, (signed char*) "addNumbers", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
     //xTaskCreate(makeUI, (signed char*) "makeUI", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
     //xTaskCreate(dispLCD, (signed char*) "dispLCD", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
