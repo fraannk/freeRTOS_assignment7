@@ -1,25 +1,25 @@
 /*
- * adc.h
+ * numpad.h
  *
  *  Created on: 25 Apr 2017
  *      Author: fraannk
  */
 
-#ifndef ADC_H_
-#define ADC_H_
+#ifndef NUMPAD_H_
+#define NUMPAD_H_
 
-void initADC(void);
+void initNumpad(void);
 /*****************************************************************************
 *   Input    : -
 *   Output   : -
-*   Function : Initiate ADC.
+*   Function : Initiate Numpad.
 ******************************************************************************/
 
-void readADC(void *p);
+void readNumpad(void *p);
 /*****************************************************************************
 *   Input    : -
 *   Output   : -
-*   Function : Reading ADC.
+*   Function : Read the numpad.
 ******************************************************************************/
 
-#endif /* ADC_H_ */
+#endif /* NUMPAD_H_ */

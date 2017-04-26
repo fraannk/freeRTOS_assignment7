@@ -23,6 +23,11 @@ Archive member included because of file (symbol)
 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libnosys.a(_exit.o)
                               /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-exit.o) (_exit)
 
+Allocating common symbols
+Common symbol       size              file
+
+lcd_display_buffer  0x20              ./lcd.o
+
 Memory Configuration
 
 Name             Origin             Length             Attributes
@@ -36,7 +41,10 @@ LOAD /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../l
 LOAD /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtbegin.o
 LOAD /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/crt0.o
 LOAD ./adc.o
+LOAD ./gpio.o
+LOAD ./lcd.o
 LOAD ./main.o
+LOAD ./numpad.o
 LOAD ./startup_frt.o
 LOAD ./systick_frt.o
 LOAD ./FRT_Library/FreeRTOS/Source/croutine.o
@@ -57,7 +65,7 @@ LOAD ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
 .vtable
  *(.vtable)
 
-.text           0x000000000000026c     0x2818
+.text           0x000000000000026c     0x2e70
  CREATE_OBJECT_SYMBOLS
  *(.text)
  .text          0x000000000000026c        0x0 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crti.o
@@ -66,7 +74,10 @@ LOAD ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
                 0x00000000000002c8                _mainCRTStartup
                 0x00000000000002c8                _start
  .text          0x000000000000033c        0x0 ./adc.o
+ .text          0x000000000000033c        0x0 ./gpio.o
+ .text          0x000000000000033c        0x0 ./lcd.o
  .text          0x000000000000033c        0x0 ./main.o
+ .text          0x000000000000033c        0x0 ./numpad.o
  .text          0x000000000000033c        0x0 ./startup_frt.o
  .text          0x000000000000033c        0x0 ./systick_frt.o
  .text          0x000000000000033c        0x0 ./FRT_Library/FreeRTOS/Source/croutine.o
@@ -93,335 +104,385 @@ LOAD ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
  *(.text.*)
  .text.initADC  0x0000000000000470       0x74 ./adc.o
                 0x0000000000000470                initADC
- .text.putChar  0x00000000000004e4       0x10 ./main.o
-                0x00000000000004e4                putChar
+ .text.readADC  0x00000000000004e4       0x7c ./adc.o
+                0x00000000000004e4                readADC
+ .text.initGPIO
+                0x0000000000000560       0x40 ./gpio.o
+                0x0000000000000560                initGPIO
+ .text.dispLCD  0x00000000000005a0       0x14 ./lcd.o
+                0x00000000000005a0                dispLCD
+ .text.delay_us
+                0x00000000000005b4       0x64 ./lcd.o
+                0x00000000000005b4                delay_us
+ .text.lcd_RS   0x0000000000000618       0x38 ./lcd.o
+                0x0000000000000618                lcd_RS
+ .text.lcd_E    0x0000000000000650       0x38 ./lcd.o
+                0x0000000000000650                lcd_E
+ .text.lcd_write_nibble
+                0x0000000000000688       0xa8 ./lcd.o
+                0x0000000000000688                lcd_write_nibble
+ .text.lcd_write_instruction
+                0x0000000000000730       0x38 ./lcd.o
+                0x0000000000000730                lcd_write_instruction
+ .text.lcd_write_data
+                0x0000000000000768       0x38 ./lcd.o
+                0x0000000000000768                lcd_write_data
+ .text.lcd_set_cursor
+                0x00000000000007a0       0x38 ./lcd.o
+                0x00000000000007a0                lcd_set_cursor
+ .text.lcd_write_line
+                0x00000000000007d8       0x34 ./lcd.o
+                0x00000000000007d8                lcd_write_line
+ .text.lcd_clear
+                0x000000000000080c       0x14 ./lcd.o
+                0x000000000000080c                lcd_clear
+ .text.lcd_set_custom_font
+                0x0000000000000820       0x6c ./lcd.o
+                0x0000000000000820                lcd_set_custom_font
+ .text.lcd_set_custom_font_eq
+                0x000000000000088c      0x18c ./lcd.o
+                0x000000000000088c                lcd_set_custom_font_eq
+ .text.lcd_write_buffer
+                0x0000000000000a18       0x54 ./lcd.o
+                0x0000000000000a18                lcd_write_buffer
+ .text.initLCD  0x0000000000000a6c       0xd0 ./lcd.o
+                0x0000000000000a6c                initLCD
+ .text.putChar  0x0000000000000b3c       0x10 ./main.o
+                0x0000000000000b3c                putChar
  .text.setupHardware
-                0x00000000000004f4        0xc ./main.o
- .text.main     0x0000000000000500       0xb0 ./main.o
-                0x0000000000000500                main
+                0x0000000000000b4c       0x18 ./main.o
+ .text.main     0x0000000000000b64       0x84 ./main.o
+                0x0000000000000b64                main
+ .text.initNumpad
+                0x0000000000000be8        0xc ./numpad.o
+                0x0000000000000be8                initNumpad
+ .text.readNumpad
+                0x0000000000000bf4       0x14 ./numpad.o
+                0x0000000000000bf4                readNumpad
  .text.ResetISR
-                0x00000000000005b0       0x68 ./startup_frt.o
-                0x00000000000005b0                ResetISR
- .text.NmiSR    0x0000000000000618        0x8 ./startup_frt.o
+                0x0000000000000c08       0x68 ./startup_frt.o
+                0x0000000000000c08                ResetISR
+ .text.NmiSR    0x0000000000000c70        0x8 ./startup_frt.o
  .text.FaultISR
-                0x0000000000000620        0x8 ./startup_frt.o
+                0x0000000000000c78        0x8 ./startup_frt.o
  .text.IntDefaultHandler
-                0x0000000000000628        0x8 ./startup_frt.o
+                0x0000000000000c80        0x8 ./startup_frt.o
  .text.enable_global_int
-                0x0000000000000630       0x10 ./systick_frt.o
-                0x0000000000000630                enable_global_int
+                0x0000000000000c88       0x10 ./systick_frt.o
+                0x0000000000000c88                enable_global_int
  .text.disable_global_int
-                0x0000000000000640       0x10 ./systick_frt.o
-                0x0000000000000640                disable_global_int
+                0x0000000000000c98       0x10 ./systick_frt.o
+                0x0000000000000c98                disable_global_int
  .text.init_systick
-                0x0000000000000650       0x84 ./systick_frt.o
-                0x0000000000000650                init_systick
+                0x0000000000000ca8       0x84 ./systick_frt.o
+                0x0000000000000ca8                init_systick
  .text.xCoRoutineCreate
-                0x00000000000006d4       0xcc ./FRT_Library/FreeRTOS/Source/croutine.o
-                0x00000000000006d4                xCoRoutineCreate
+                0x0000000000000d2c       0xcc ./FRT_Library/FreeRTOS/Source/croutine.o
+                0x0000000000000d2c                xCoRoutineCreate
  .text.vCoRoutineAddToDelayedList
-                0x00000000000007a0       0x84 ./FRT_Library/FreeRTOS/Source/croutine.o
-                0x00000000000007a0                vCoRoutineAddToDelayedList
+                0x0000000000000df8       0x84 ./FRT_Library/FreeRTOS/Source/croutine.o
+                0x0000000000000df8                vCoRoutineAddToDelayedList
  .text.prvCheckPendingReadyList
-                0x0000000000000824       0x8c ./FRT_Library/FreeRTOS/Source/croutine.o
+                0x0000000000000e7c       0x8c ./FRT_Library/FreeRTOS/Source/croutine.o
  .text.prvCheckDelayedList
-                0x00000000000008b0      0x104 ./FRT_Library/FreeRTOS/Source/croutine.o
+                0x0000000000000f08      0x104 ./FRT_Library/FreeRTOS/Source/croutine.o
  .text.vCoRoutineSchedule
-                0x00000000000009b4       0xa0 ./FRT_Library/FreeRTOS/Source/croutine.o
-                0x00000000000009b4                vCoRoutineSchedule
+                0x000000000000100c       0xa0 ./FRT_Library/FreeRTOS/Source/croutine.o
+                0x000000000000100c                vCoRoutineSchedule
  .text.prvInitialiseCoRoutineLists
-                0x0000000000000a54       0x68 ./FRT_Library/FreeRTOS/Source/croutine.o
+                0x00000000000010ac       0x68 ./FRT_Library/FreeRTOS/Source/croutine.o
  .text.xCoRoutineRemoveFromEventList
-                0x0000000000000abc       0x5c ./FRT_Library/FreeRTOS/Source/croutine.o
-                0x0000000000000abc                xCoRoutineRemoveFromEventList
+                0x0000000000001114       0x5c ./FRT_Library/FreeRTOS/Source/croutine.o
+                0x0000000000001114                xCoRoutineRemoveFromEventList
  .text.vListInitialise
-                0x0000000000000b18       0x40 ./FRT_Library/FreeRTOS/Source/list.o
-                0x0000000000000b18                vListInitialise
+                0x0000000000001170       0x40 ./FRT_Library/FreeRTOS/Source/list.o
+                0x0000000000001170                vListInitialise
  .text.vListInitialiseItem
-                0x0000000000000b58       0x18 ./FRT_Library/FreeRTOS/Source/list.o
-                0x0000000000000b58                vListInitialiseItem
+                0x00000000000011b0       0x18 ./FRT_Library/FreeRTOS/Source/list.o
+                0x00000000000011b0                vListInitialiseItem
  .text.vListInsertEnd
-                0x0000000000000b70       0x50 ./FRT_Library/FreeRTOS/Source/list.o
-                0x0000000000000b70                vListInsertEnd
+                0x00000000000011c8       0x50 ./FRT_Library/FreeRTOS/Source/list.o
+                0x00000000000011c8                vListInsertEnd
  .text.vListInsert
-                0x0000000000000bc0       0x70 ./FRT_Library/FreeRTOS/Source/list.o
-                0x0000000000000bc0                vListInsert
+                0x0000000000001218       0x70 ./FRT_Library/FreeRTOS/Source/list.o
+                0x0000000000001218                vListInsert
  .text.vListRemove
-                0x0000000000000c30       0x50 ./FRT_Library/FreeRTOS/Source/list.o
-                0x0000000000000c30                vListRemove
+                0x0000000000001288       0x50 ./FRT_Library/FreeRTOS/Source/list.o
+                0x0000000000001288                vListRemove
  .text.xQueueCreate
-                0x0000000000000c80       0xb8 ./FRT_Library/FreeRTOS/Source/queue.o
-                0x0000000000000c80                xQueueCreate
+                0x00000000000012d8       0xb8 ./FRT_Library/FreeRTOS/Source/queue.o
+                0x00000000000012d8                xQueueCreate
  .text.xQueueCreateMutex
-                0x0000000000000d38       0x78 ./FRT_Library/FreeRTOS/Source/queue.o
-                0x0000000000000d38                xQueueCreateMutex
+                0x0000000000001390       0x78 ./FRT_Library/FreeRTOS/Source/queue.o
+                0x0000000000001390                xQueueCreateMutex
  .text.xQueueGiveMutexRecursive
-                0x0000000000000db0       0x48 ./FRT_Library/FreeRTOS/Source/queue.o
-                0x0000000000000db0                xQueueGiveMutexRecursive
+                0x0000000000001408       0x48 ./FRT_Library/FreeRTOS/Source/queue.o
+                0x0000000000001408                xQueueGiveMutexRecursive
  .text.xQueueTakeMutexRecursive
-                0x0000000000000df8       0x50 ./FRT_Library/FreeRTOS/Source/queue.o
-                0x0000000000000df8                xQueueTakeMutexRecursive
+                0x0000000000001450       0x50 ./FRT_Library/FreeRTOS/Source/queue.o
+                0x0000000000001450                xQueueTakeMutexRecursive
  .text.xQueueGenericSend
-                0x0000000000000e48      0x10c ./FRT_Library/FreeRTOS/Source/queue.o
-                0x0000000000000e48                xQueueGenericSend
+                0x00000000000014a0      0x10c ./FRT_Library/FreeRTOS/Source/queue.o
+                0x00000000000014a0                xQueueGenericSend
  .text.xQueueGenericSendFromISR
-                0x0000000000000f54       0x80 ./FRT_Library/FreeRTOS/Source/queue.o
-                0x0000000000000f54                xQueueGenericSendFromISR
+                0x00000000000015ac       0x80 ./FRT_Library/FreeRTOS/Source/queue.o
+                0x00000000000015ac                xQueueGenericSendFromISR
  .text.xQueueGenericReceive
-                0x0000000000000fd4      0x16c ./FRT_Library/FreeRTOS/Source/queue.o
-                0x0000000000000fd4                xQueueGenericReceive
+                0x000000000000162c      0x16c ./FRT_Library/FreeRTOS/Source/queue.o
+                0x000000000000162c                xQueueGenericReceive
  .text.xQueueReceiveFromISR
-                0x0000000000001140       0x84 ./FRT_Library/FreeRTOS/Source/queue.o
-                0x0000000000001140                xQueueReceiveFromISR
+                0x0000000000001798       0x84 ./FRT_Library/FreeRTOS/Source/queue.o
+                0x0000000000001798                xQueueReceiveFromISR
  .text.uxQueueMessagesWaiting
-                0x00000000000011c4       0x20 ./FRT_Library/FreeRTOS/Source/queue.o
-                0x00000000000011c4                uxQueueMessagesWaiting
+                0x000000000000181c       0x20 ./FRT_Library/FreeRTOS/Source/queue.o
+                0x000000000000181c                uxQueueMessagesWaiting
  .text.uxQueueMessagesWaitingFromISR
-                0x00000000000011e4       0x1c ./FRT_Library/FreeRTOS/Source/queue.o
-                0x00000000000011e4                uxQueueMessagesWaitingFromISR
+                0x000000000000183c       0x1c ./FRT_Library/FreeRTOS/Source/queue.o
+                0x000000000000183c                uxQueueMessagesWaitingFromISR
  .text.vQueueDelete
-                0x0000000000001200       0x20 ./FRT_Library/FreeRTOS/Source/queue.o
-                0x0000000000001200                vQueueDelete
+                0x0000000000001858       0x20 ./FRT_Library/FreeRTOS/Source/queue.o
+                0x0000000000001858                vQueueDelete
  .text.prvCopyDataToQueue
-                0x0000000000001220       0xb8 ./FRT_Library/FreeRTOS/Source/queue.o
+                0x0000000000001878       0xb8 ./FRT_Library/FreeRTOS/Source/queue.o
  .text.prvCopyDataFromQueue
-                0x00000000000012d8       0x4c ./FRT_Library/FreeRTOS/Source/queue.o
+                0x0000000000001930       0x4c ./FRT_Library/FreeRTOS/Source/queue.o
  .text.prvUnlockQueue
-                0x0000000000001324       0x98 ./FRT_Library/FreeRTOS/Source/queue.o
+                0x000000000000197c       0x98 ./FRT_Library/FreeRTOS/Source/queue.o
  .text.prvIsQueueEmpty
-                0x00000000000013bc       0x2c ./FRT_Library/FreeRTOS/Source/queue.o
+                0x0000000000001a14       0x2c ./FRT_Library/FreeRTOS/Source/queue.o
  .text.xQueueIsQueueEmptyFromISR
-                0x00000000000013e8       0x28 ./FRT_Library/FreeRTOS/Source/queue.o
-                0x00000000000013e8                xQueueIsQueueEmptyFromISR
+                0x0000000000001a40       0x28 ./FRT_Library/FreeRTOS/Source/queue.o
+                0x0000000000001a40                xQueueIsQueueEmptyFromISR
  .text.prvIsQueueFull
-                0x0000000000001410       0x30 ./FRT_Library/FreeRTOS/Source/queue.o
+                0x0000000000001a68       0x30 ./FRT_Library/FreeRTOS/Source/queue.o
  .text.xQueueIsQueueFullFromISR
-                0x0000000000001440       0x2c ./FRT_Library/FreeRTOS/Source/queue.o
-                0x0000000000001440                xQueueIsQueueFullFromISR
+                0x0000000000001a98       0x2c ./FRT_Library/FreeRTOS/Source/queue.o
+                0x0000000000001a98                xQueueIsQueueFullFromISR
  .text.xTaskGenericCreate
-                0x000000000000146c      0x148 ./FRT_Library/FreeRTOS/Source/tasks.o
-                0x000000000000146c                xTaskGenericCreate
+                0x0000000000001ac4      0x148 ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x0000000000001ac4                xTaskGenericCreate
  .text.vTaskDelete
-                0x00000000000015b4       0x98 ./FRT_Library/FreeRTOS/Source/tasks.o
-                0x00000000000015b4                vTaskDelete
+                0x0000000000001c0c       0x98 ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x0000000000001c0c                vTaskDelete
  .text.vTaskDelayUntil
-                0x000000000000164c       0xd0 ./FRT_Library/FreeRTOS/Source/tasks.o
-                0x000000000000164c                vTaskDelayUntil
+                0x0000000000001ca4       0xd0 ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x0000000000001ca4                vTaskDelayUntil
  .text.vTaskDelay
-                0x000000000000171c       0x8c ./FRT_Library/FreeRTOS/Source/tasks.o
-                0x000000000000171c                vTaskDelay
+                0x0000000000001d74       0x8c ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x0000000000001d74                vTaskDelay
  .text.uxTaskPriorityGet
-                0x00000000000017a8       0x34 ./FRT_Library/FreeRTOS/Source/tasks.o
-                0x00000000000017a8                uxTaskPriorityGet
+                0x0000000000001e00       0x34 ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x0000000000001e00                uxTaskPriorityGet
  .text.vTaskPrioritySet
-                0x00000000000017dc       0xf8 ./FRT_Library/FreeRTOS/Source/tasks.o
-                0x00000000000017dc                vTaskPrioritySet
+                0x0000000000001e34       0xf8 ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x0000000000001e34                vTaskPrioritySet
  .text.vTaskSuspend
-                0x00000000000018d4       0x70 ./FRT_Library/FreeRTOS/Source/tasks.o
-                0x00000000000018d4                vTaskSuspend
+                0x0000000000001f2c       0x70 ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x0000000000001f2c                vTaskSuspend
  .text.xTaskIsTaskSuspended
-                0x0000000000001944       0x48 ./FRT_Library/FreeRTOS/Source/tasks.o
-                0x0000000000001944                xTaskIsTaskSuspended
+                0x0000000000001f9c       0x48 ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x0000000000001f9c                xTaskIsTaskSuspended
  .text.vTaskResume
-                0x000000000000198c       0x90 ./FRT_Library/FreeRTOS/Source/tasks.o
-                0x000000000000198c                vTaskResume
+                0x0000000000001fe4       0x90 ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x0000000000001fe4                vTaskResume
  .text.xTaskResumeFromISR
-                0x0000000000001a1c       0xa0 ./FRT_Library/FreeRTOS/Source/tasks.o
-                0x0000000000001a1c                xTaskResumeFromISR
+                0x0000000000002074       0xa0 ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x0000000000002074                xTaskResumeFromISR
  .text.vTaskStartScheduler
-                0x0000000000001abc       0x58 ./FRT_Library/FreeRTOS/Source/tasks.o
-                0x0000000000001abc                vTaskStartScheduler
+                0x0000000000002114       0x58 ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x0000000000002114                vTaskStartScheduler
  .text.vTaskEndScheduler
-                0x0000000000001b14       0x1c ./FRT_Library/FreeRTOS/Source/tasks.o
-                0x0000000000001b14                vTaskEndScheduler
+                0x000000000000216c       0x1c ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x000000000000216c                vTaskEndScheduler
  .text.vTaskSuspendAll
-                0x0000000000001b30       0x1c ./FRT_Library/FreeRTOS/Source/tasks.o
-                0x0000000000001b30                vTaskSuspendAll
+                0x0000000000002188       0x1c ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x0000000000002188                vTaskSuspendAll
  .text.xTaskResumeAll
-                0x0000000000001b4c      0x100 ./FRT_Library/FreeRTOS/Source/tasks.o
-                0x0000000000001b4c                xTaskResumeAll
+                0x00000000000021a4      0x100 ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x00000000000021a4                xTaskResumeAll
  .text.xTaskGetTickCount
-                0x0000000000001c4c       0x24 ./FRT_Library/FreeRTOS/Source/tasks.o
-                0x0000000000001c4c                xTaskGetTickCount
+                0x00000000000022a4       0x24 ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x00000000000022a4                xTaskGetTickCount
  .text.uxTaskGetNumberOfTasks
-                0x0000000000001c70       0x18 ./FRT_Library/FreeRTOS/Source/tasks.o
-                0x0000000000001c70                uxTaskGetNumberOfTasks
+                0x00000000000022c8       0x18 ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x00000000000022c8                uxTaskGetNumberOfTasks
  .text.vTaskIncrementTick
-                0x0000000000001c88       0xdc ./FRT_Library/FreeRTOS/Source/tasks.o
-                0x0000000000001c88                vTaskIncrementTick
+                0x00000000000022e0       0xdc ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x00000000000022e0                vTaskIncrementTick
  .text.vTaskSwitchContext
-                0x0000000000001d64       0x94 ./FRT_Library/FreeRTOS/Source/tasks.o
-                0x0000000000001d64                vTaskSwitchContext
+                0x00000000000023bc       0x94 ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x00000000000023bc                vTaskSwitchContext
  .text.vTaskPlaceOnEventList
-                0x0000000000001df8       0x98 ./FRT_Library/FreeRTOS/Source/tasks.o
-                0x0000000000001df8                vTaskPlaceOnEventList
+                0x0000000000002450       0x98 ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x0000000000002450                vTaskPlaceOnEventList
  .text.xTaskRemoveFromEventList
-                0x0000000000001e90       0xac ./FRT_Library/FreeRTOS/Source/tasks.o
-                0x0000000000001e90                xTaskRemoveFromEventList
+                0x00000000000024e8       0xac ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x00000000000024e8                xTaskRemoveFromEventList
  .text.vTaskSetTimeOutState
-                0x0000000000001f3c       0x2c ./FRT_Library/FreeRTOS/Source/tasks.o
-                0x0000000000001f3c                vTaskSetTimeOutState
+                0x0000000000002594       0x2c ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x0000000000002594                vTaskSetTimeOutState
  .text.xTaskCheckForTimeOut
-                0x0000000000001f68       0x88 ./FRT_Library/FreeRTOS/Source/tasks.o
-                0x0000000000001f68                xTaskCheckForTimeOut
+                0x00000000000025c0       0x88 ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x00000000000025c0                xTaskCheckForTimeOut
  .text.vTaskMissedYield
-                0x0000000000001ff0       0x18 ./FRT_Library/FreeRTOS/Source/tasks.o
-                0x0000000000001ff0                vTaskMissedYield
+                0x0000000000002648       0x18 ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x0000000000002648                vTaskMissedYield
  .text.prvIdleTask
-                0x0000000000002008       0x20 ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x0000000000002660       0x20 ./FRT_Library/FreeRTOS/Source/tasks.o
  .text.prvInitialiseTCBVariables
-                0x0000000000002028       0x6c ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x0000000000002680       0x6c ./FRT_Library/FreeRTOS/Source/tasks.o
  .text.prvInitialiseTaskLists
-                0x0000000000002094       0x7c ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x00000000000026ec       0x7c ./FRT_Library/FreeRTOS/Source/tasks.o
  .text.prvCheckTasksWaitingTermination
-                0x0000000000002110       0x84 ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x0000000000002768       0x84 ./FRT_Library/FreeRTOS/Source/tasks.o
  .text.prvAllocateTCBAndStack
-                0x0000000000002194       0x64 ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x00000000000027ec       0x64 ./FRT_Library/FreeRTOS/Source/tasks.o
  .text.prvDeleteTCB
-                0x00000000000021f8       0x20 ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x0000000000002850       0x20 ./FRT_Library/FreeRTOS/Source/tasks.o
  .text.xTaskGetCurrentTaskHandle
-                0x0000000000002218       0x20 ./FRT_Library/FreeRTOS/Source/tasks.o
-                0x0000000000002218                xTaskGetCurrentTaskHandle
+                0x0000000000002870       0x20 ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x0000000000002870                xTaskGetCurrentTaskHandle
  .text.vTaskPriorityInherit
-                0x0000000000002238       0xa4 ./FRT_Library/FreeRTOS/Source/tasks.o
-                0x0000000000002238                vTaskPriorityInherit
+                0x0000000000002890       0xa4 ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x0000000000002890                vTaskPriorityInherit
  .text.vTaskPriorityDisinherit
-                0x00000000000022dc       0x7c ./FRT_Library/FreeRTOS/Source/tasks.o
-                0x00000000000022dc                vTaskPriorityDisinherit
+                0x0000000000002934       0x7c ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x0000000000002934                vTaskPriorityDisinherit
  .text.vApplicationStackOverflowHook
-                0x0000000000002358       0x2c ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/common.o
-                0x0000000000002358                vApplicationStackOverflowHook
+                0x00000000000029b0       0x2c ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/common.o
+                0x00000000000029b0                vApplicationStackOverflowHook
  .text.pxPortInitialiseStack
-                0x0000000000002384       0x54 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
-                0x0000000000002384                pxPortInitialiseStack
+                0x00000000000029dc       0x54 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
+                0x00000000000029dc                pxPortInitialiseStack
  .text.vPortSVCHandler
-                0x00000000000023d8       0x20 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
-                0x00000000000023d8                vPortSVCHandler
+                0x0000000000002a30       0x20 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
+                0x0000000000002a30                vPortSVCHandler
  .text.vPortStartFirstTask
-                0x00000000000023f8       0x10 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
-                0x00000000000023f8                vPortStartFirstTask
+                0x0000000000002a50       0x10 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
+                0x0000000000002a50                vPortStartFirstTask
  .text.xPortStartScheduler
-                0x0000000000002408       0x38 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
-                0x0000000000002408                xPortStartScheduler
+                0x0000000000002a60       0x38 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
+                0x0000000000002a60                xPortStartScheduler
  .text.vPortEndScheduler
-                0x0000000000002440        0xc ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
-                0x0000000000002440                vPortEndScheduler
+                0x0000000000002a98        0xc ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
+                0x0000000000002a98                vPortEndScheduler
  .text.vPortYieldFromISR
-                0x000000000000244c       0x18 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
-                0x000000000000244c                vPortYieldFromISR
+                0x0000000000002aa4       0x18 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
+                0x0000000000002aa4                vPortYieldFromISR
  .text.vPortEnterCritical
-                0x0000000000002464       0x24 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
-                0x0000000000002464                vPortEnterCritical
+                0x0000000000002abc       0x24 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
+                0x0000000000002abc                vPortEnterCritical
  .text.vPortExitCritical
-                0x0000000000002488       0x2c ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
-                0x0000000000002488                vPortExitCritical
+                0x0000000000002ae0       0x2c ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
+                0x0000000000002ae0                vPortExitCritical
  .text.xPortPendSVHandler
-                0x00000000000024b4       0x3c ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
-                0x00000000000024b4                xPortPendSVHandler
+                0x0000000000002b0c       0x3c ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
+                0x0000000000002b0c                xPortPendSVHandler
  .text.xPortSysTickHandler
-                0x00000000000024f0       0x30 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
-                0x00000000000024f0                xPortSysTickHandler
+                0x0000000000002b48       0x30 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
+                0x0000000000002b48                xPortSysTickHandler
  .text.prvSetupTimerInterrupt
-                0x0000000000002520       0x24 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
+                0x0000000000002b78       0x24 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
  .text.pvPortMalloc
-                0x0000000000002544      0x14c ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
-                0x0000000000002544                pvPortMalloc
+                0x0000000000002b9c      0x14c ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
+                0x0000000000002b9c                pvPortMalloc
  .text.vPortFree
-                0x0000000000002690       0x70 ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
-                0x0000000000002690                vPortFree
+                0x0000000000002ce8       0x70 ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
+                0x0000000000002ce8                vPortFree
  .text.xPortGetFreeHeapSize
-                0x0000000000002700       0x18 ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
-                0x0000000000002700                xPortGetFreeHeapSize
+                0x0000000000002d58       0x18 ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
+                0x0000000000002d58                xPortGetFreeHeapSize
  .text.vPortInitialiseBlocks
-                0x0000000000002718        0xc ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
-                0x0000000000002718                vPortInitialiseBlocks
- .text.exit     0x0000000000002724       0x20 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-exit.o)
-                0x0000000000002724                exit
+                0x0000000000002d70        0xc ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
+                0x0000000000002d70                vPortInitialiseBlocks
+ .text.exit     0x0000000000002d7c       0x20 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-exit.o)
+                0x0000000000002d7c                exit
  .text.__libc_init_array
-                0x0000000000002744       0x50 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-init.o)
-                0x0000000000002744                __libc_init_array
- .text.memset   0x0000000000002794       0x9c /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-memset.o)
-                0x0000000000002794                memset
- .text.strncpy  0x0000000000002830       0x68 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-strncpy.o)
-                0x0000000000002830                strncpy
+                0x0000000000002d9c       0x50 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-init.o)
+                0x0000000000002d9c                __libc_init_array
+ .text.memset   0x0000000000002dec       0x9c /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-memset.o)
+                0x0000000000002dec                memset
+ .text.strncpy  0x0000000000002e88       0x68 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-strncpy.o)
+                0x0000000000002e88                strncpy
  .text.startup.register_fini
-                0x0000000000002898       0x14 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-__call_atexit.o)
+                0x0000000000002ef0       0x14 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-__call_atexit.o)
  .text.__call_exitprocs
-                0x00000000000028ac       0xd4 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-__call_atexit.o)
-                0x00000000000028ac                __call_exitprocs
- .text.atexit   0x0000000000002980        0xc /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-atexit.o)
-                0x0000000000002980                atexit
+                0x0000000000002f04       0xd4 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-__call_atexit.o)
+                0x0000000000002f04                __call_exitprocs
+ .text.atexit   0x0000000000002fd8        0xc /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-atexit.o)
+                0x0000000000002fd8                atexit
  .text.__libc_fini_array
-                0x000000000000298c       0x2c /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-fini.o)
-                0x000000000000298c                __libc_fini_array
+                0x0000000000002fe4       0x2c /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-fini.o)
+                0x0000000000002fe4                __libc_fini_array
  .text.__register_exitproc
-                0x00000000000029b8       0xa4 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-__atexit.o)
-                0x00000000000029b8                __register_exitproc
- .text._exit    0x0000000000002a5c        0x4 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libnosys.a(_exit.o)
-                0x0000000000002a5c                _exit
-                0x0000000000002a60                . = ALIGN (0x4)
+                0x0000000000003010       0xa4 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-__atexit.o)
+                0x0000000000003010                __register_exitproc
+ .text._exit    0x00000000000030b4        0x4 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libnosys.a(_exit.o)
+                0x00000000000030b4                _exit
+                0x00000000000030b8                . = ALIGN (0x4)
  *(.ctors)
-                0x0000000000002a60                . = ALIGN (0x4)
+                0x00000000000030b8                . = ALIGN (0x4)
  *(.dtors)
-                0x0000000000002a60                . = ALIGN (0x4)
-                0x0000000000002a60                __init_array_start = .
+                0x00000000000030b8                . = ALIGN (0x4)
+                0x00000000000030b8                __init_array_start = .
  *(.init_array*)
- .init_array    0x0000000000002a60        0x4 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtbegin.o
+ .init_array    0x00000000000030b8        0x4 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtbegin.o
  .init_array.00000
-                0x0000000000002a64        0x4 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-__call_atexit.o)
-                0x0000000000002a68                __init_array_end = .
+                0x00000000000030bc        0x4 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-__call_atexit.o)
+                0x00000000000030c0                __init_array_end = .
  *(.init)
- .init          0x0000000000002a68        0x4 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crti.o
-                0x0000000000002a68                _init
- .init          0x0000000000002a6c        0x8 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtn.o
+ .init          0x00000000000030c0        0x4 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crti.o
+                0x00000000000030c0                _init
+ .init          0x00000000000030c4        0x8 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtn.o
  *(.fini*)
- .fini          0x0000000000002a74        0x4 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crti.o
-                0x0000000000002a74                _fini
- .fini_array    0x0000000000002a78        0x4 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtbegin.o
- .fini          0x0000000000002a7c        0x8 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtn.o
-                0x0000000000002a84                PROVIDE (__etext, .)
-                0x0000000000002a84                PROVIDE (_etext, .)
-                0x0000000000002a84                PROVIDE (etext, .)
+ .fini          0x00000000000030cc        0x4 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crti.o
+                0x00000000000030cc                _fini
+ .fini_array    0x00000000000030d0        0x4 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtbegin.o
+ .fini          0x00000000000030d4        0x8 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtn.o
+                0x00000000000030dc                PROVIDE (__etext, .)
+                0x00000000000030dc                PROVIDE (_etext, .)
+                0x00000000000030dc                PROVIDE (etext, .)
 
-.glue_7         0x0000000000002a84        0x0
+.glue_7         0x00000000000030dc        0x0
  .glue_7        0x0000000000000000        0x0 linker stubs
 
-.glue_7t        0x0000000000002a84        0x0
+.glue_7t        0x00000000000030dc        0x0
  .glue_7t       0x0000000000000000        0x0 linker stubs
 
-.vfp11_veneer   0x0000000000002a84        0x0
+.vfp11_veneer   0x00000000000030dc        0x0
  .vfp11_veneer  0x0000000000000000        0x0 linker stubs
 
-.v4_bx          0x0000000000002a84        0x0
+.v4_bx          0x00000000000030dc        0x0
  .v4_bx         0x0000000000000000        0x0 linker stubs
 
-.iplt           0x0000000000002a84        0x0
+.iplt           0x00000000000030dc        0x0
  .iplt          0x0000000000000000        0x0 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtbegin.o
 
-.rodata         0x0000000000002a84       0x18
+.rodata         0x00000000000030dc       0x34
  *(.rodata)
- .rodata        0x0000000000002a84        0x5 ./FRT_Library/FreeRTOS/Source/tasks.o
+ .rodata        0x00000000000030dc       0x1c ./main.o
+ .rodata        0x00000000000030f8        0x5 ./FRT_Library/FreeRTOS/Source/tasks.o
  *(.rodata*)
- *fill*         0x0000000000002a89        0x3 
+ *fill*         0x00000000000030fd        0x3 
  .rodata.ulKernelPriority
-                0x0000000000002a8c        0x4 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
-                0x0000000000002a8c                ulKernelPriority
+                0x0000000000003100        0x4 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
+                0x0000000000003100                ulKernelPriority
  .rodata.heapSTRUCT_SIZE
-                0x0000000000002a90        0x2 ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
- *fill*         0x0000000000002a92        0x2 
+                0x0000000000003104        0x2 ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
+ *fill*         0x0000000000003106        0x2 
  .rodata.str1.4
-                0x0000000000002a94        0x4 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-impure.o)
+                0x0000000000003108        0x4 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-impure.o)
                                           0x2 (size before relaxing)
  .rodata._global_impure_ptr
-                0x0000000000002a98        0x4 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-impure.o)
-                0x0000000000002a98                _global_impure_ptr
+                0x000000000000310c        0x4 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-impure.o)
+                0x000000000000310c                _global_impure_ptr
 
-.eh_frame       0x0000000000002a9c        0x4
- .eh_frame      0x0000000000002a9c        0x0 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtbegin.o
- .eh_frame      0x0000000000002a9c        0x4 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtend.o
+.eh_frame       0x0000000000003110        0x4
+ .eh_frame      0x0000000000003110        0x0 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtbegin.o
+ .eh_frame      0x0000000000003110        0x4 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtend.o
 
-.data           0x0000000020000000      0x434 load address 0x0000000000002aa0
-                0x0000000000002aa0                __data_load__ = LOADADDR (.data)
+.data           0x0000000020000000      0x434 load address 0x0000000000003114
+                0x0000000000003114                __data_load__ = LOADADDR (.data)
                 0x0000000020000000                __data_start__ = .
  *(.data)
  .data          0x0000000020000000        0x0 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crti.o
@@ -429,7 +490,10 @@ LOAD ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
                 0x0000000020000000                __dso_handle
  .data          0x0000000020000004        0x0 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/crt0.o
  .data          0x0000000020000004        0x0 ./adc.o
+ .data          0x0000000020000004        0x0 ./gpio.o
+ .data          0x0000000020000004        0x0 ./lcd.o
  .data          0x0000000020000004        0x0 ./main.o
+ .data          0x0000000020000004        0x0 ./numpad.o
  .data          0x0000000020000004        0x0 ./startup_frt.o
  .data          0x0000000020000004        0x0 ./systick_frt.o
  .data          0x0000000020000004        0x0 ./FRT_Library/FreeRTOS/Source/croutine.o
@@ -463,27 +527,27 @@ LOAD ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
                 0x0000000020000434                . = ALIGN (0x4)
                 0x0000000020000434                __data_end__ = .
 
-.jcr            0x0000000020000434        0x4 load address 0x0000000000002ed4
+.jcr            0x0000000020000434        0x4 load address 0x0000000000003548
  .jcr           0x0000000020000434        0x0 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtbegin.o
  .jcr           0x0000000020000434        0x4 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtend.o
 
-.igot.plt       0x0000000020000438        0x0 load address 0x0000000000002ed8
+.igot.plt       0x0000000020000438        0x0 load address 0x000000000000354c
  .igot.plt      0x0000000000000000        0x0 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtbegin.o
 
-.ARM.exidx      0x0000000000002ed8        0x8
-                0x0000000000002ed8                __exidx_start = .
+.ARM.exidx      0x000000000000354c        0x8
+                0x000000000000354c                __exidx_start = .
  *(.ARM.exidx* .gnu.linkonce.armexidx.*)
- .ARM.exidx     0x0000000000002ed8        0x8 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/crt0.o
-                0x0000000000002ee0                __exidx_end = .
+ .ARM.exidx     0x000000000000354c        0x8 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/crt0.o
+                0x0000000000003554                __exidx_end = .
 
-.ARM.extab      0x0000000000002ee0        0x0
+.ARM.extab      0x0000000000003554        0x0
  *(.ARM.extab* .gnu.linkonce.armextab.*)
- .ARM.extab     0x0000000000002ee0        0x0 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/crt0.o
+ .ARM.extab     0x0000000000003554        0x0 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/crt0.o
 
-.rel.dyn        0x0000000000002ee0        0x0
+.rel.dyn        0x0000000000003554        0x0
  .rel.iplt      0x0000000000000000        0x0 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtbegin.o
 
-.bss            0x0000000020000438     0x1f78
+.bss            0x0000000020000438     0x1f98
                 0x0000000020000438                __bss_start__ = .
  *(.shbss)
  *(.bss)
@@ -491,7 +555,10 @@ LOAD ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
  .bss           0x0000000020000438       0x1c /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtbegin.o
  .bss           0x0000000020000454        0x0 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/crt0.o
  .bss           0x0000000020000454        0x0 ./adc.o
+ .bss           0x0000000020000454        0x0 ./gpio.o
+ .bss           0x0000000020000454        0x0 ./lcd.o
  .bss           0x0000000020000454        0x0 ./main.o
+ .bss           0x0000000020000454        0x0 ./numpad.o
  .bss           0x0000000020000454        0x0 ./startup_frt.o
  .bss           0x0000000020000454        0x0 ./systick_frt.o
  .bss           0x0000000020000454        0x0 ./FRT_Library/FreeRTOS/Source/croutine.o
@@ -515,8 +582,8 @@ LOAD ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
  .bss           0x0000000020000454        0x0 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtend.o
  .bss           0x0000000020000454        0x0 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtn.o
  *(.bss.*)
- .bss.Result.4182
-                0x0000000020000454        0x4 ./main.o
+ .bss.Result.4000
+                0x0000000020000454        0x4 ./adc.o
  .bss.pui32Stack
                 0x0000000020000458      0x200 ./startup_frt.o
  .bss.pxReadyCoRoutineLists
@@ -592,21 +659,23 @@ LOAD ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
  .bss.xHeapHasBeenInitialised.4521
                 0x00000000200023ac        0x4 ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
  *(COMMON)
-                0x00000000200023b0                . = ALIGN (0x4)
-                0x00000000200023b0                __bss_end__ = .
+ COMMON         0x00000000200023b0       0x20 ./lcd.o
+                0x00000000200023b0                lcd_display_buffer
+                0x00000000200023d0                . = ALIGN (0x4)
+                0x00000000200023d0                __bss_end__ = .
 
-.heap           0x00000000200023b0        0x0
-                0x00000000200023b0                __heap_start__ = .
-                0x00000000200023b0                end = __heap_start__
-                0x00000000200023b0                _end = end
-                0x00000000200023b0                __end = end
+.heap           0x00000000200023d0        0x0
+                0x00000000200023d0                __heap_start__ = .
+                0x00000000200023d0                end = __heap_start__
+                0x00000000200023d0                _end = end
+                0x00000000200023d0                __end = end
  *(.heap)
-                0x00000000200023b0                __heap_end__ = .
-                0x00000000200023b0                __HeapLimit = __heap_end__
+                0x00000000200023d0                __heap_end__ = .
+                0x00000000200023d0                __HeapLimit = __heap_end__
 
-.stack          0x00000000200023b0        0x0
-                0x00000000200023b0                _stack = .
-                0x00000000200023b0                __stack = .
+.stack          0x00000000200023d0        0x0
+                0x00000000200023d0                _stack = .
+                0x00000000200023d0                __stack = .
  *(.stack)
 START GROUP
 LOAD /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a
@@ -633,56 +702,65 @@ OUTPUT(freeRTOS_assignment7.out elf32-littlearm)
  .ARM.attributes
                 0x0000000000000076       0x39 ./adc.o
  .ARM.attributes
-                0x00000000000000af       0x39 ./main.o
+                0x00000000000000af       0x39 ./gpio.o
  .ARM.attributes
-                0x00000000000000e8       0x39 ./startup_frt.o
+                0x00000000000000e8       0x39 ./lcd.o
  .ARM.attributes
-                0x0000000000000121       0x39 ./systick_frt.o
+                0x0000000000000121       0x39 ./main.o
  .ARM.attributes
-                0x000000000000015a       0x39 ./FRT_Library/FreeRTOS/Source/croutine.o
+                0x000000000000015a       0x39 ./numpad.o
  .ARM.attributes
-                0x0000000000000193       0x39 ./FRT_Library/FreeRTOS/Source/list.o
+                0x0000000000000193       0x39 ./startup_frt.o
  .ARM.attributes
-                0x00000000000001cc       0x39 ./FRT_Library/FreeRTOS/Source/queue.o
+                0x00000000000001cc       0x39 ./systick_frt.o
  .ARM.attributes
-                0x0000000000000205       0x39 ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x0000000000000205       0x39 ./FRT_Library/FreeRTOS/Source/croutine.o
  .ARM.attributes
-                0x000000000000023e       0x39 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/common.o
+                0x000000000000023e       0x39 ./FRT_Library/FreeRTOS/Source/list.o
  .ARM.attributes
-                0x0000000000000277       0x39 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
+                0x0000000000000277       0x39 ./FRT_Library/FreeRTOS/Source/queue.o
  .ARM.attributes
-                0x00000000000002b0       0x39 ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
+                0x00000000000002b0       0x39 ./FRT_Library/FreeRTOS/Source/tasks.o
  .ARM.attributes
-                0x00000000000002e9       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-exit.o)
+                0x00000000000002e9       0x39 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/common.o
  .ARM.attributes
-                0x000000000000031d       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-impure.o)
+                0x0000000000000322       0x39 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
  .ARM.attributes
-                0x0000000000000351       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-init.o)
+                0x000000000000035b       0x39 ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
  .ARM.attributes
-                0x0000000000000385       0x20 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-memcpy.o)
+                0x0000000000000394       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-exit.o)
  .ARM.attributes
-                0x00000000000003a5       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-memset.o)
+                0x00000000000003c8       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-impure.o)
  .ARM.attributes
-                0x00000000000003d9       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-strncpy.o)
+                0x00000000000003fc       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-init.o)
  .ARM.attributes
-                0x000000000000040d       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-__call_atexit.o)
+                0x0000000000000430       0x20 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-memcpy.o)
  .ARM.attributes
-                0x0000000000000441       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-atexit.o)
+                0x0000000000000450       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-memset.o)
  .ARM.attributes
-                0x0000000000000475       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-fini.o)
+                0x0000000000000484       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-strncpy.o)
  .ARM.attributes
-                0x00000000000004a9       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-__atexit.o)
+                0x00000000000004b8       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-__call_atexit.o)
  .ARM.attributes
-                0x00000000000004dd       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libnosys.a(_exit.o)
+                0x00000000000004ec       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-atexit.o)
  .ARM.attributes
-                0x0000000000000511       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtend.o
+                0x0000000000000520       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-fini.o)
  .ARM.attributes
-                0x0000000000000545       0x22 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtn.o
+                0x0000000000000554       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-__atexit.o)
+ .ARM.attributes
+                0x0000000000000588       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libnosys.a(_exit.o)
+ .ARM.attributes
+                0x00000000000005bc       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtend.o
+ .ARM.attributes
+                0x00000000000005f0       0x22 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/crtn.o
 
 .comment        0x0000000000000000       0x70
  .comment       0x0000000000000000       0x70 ./adc.o
                                          0x71 (size before relaxing)
+ .comment       0x0000000000000000       0x71 ./gpio.o
+ .comment       0x0000000000000000       0x71 ./lcd.o
  .comment       0x0000000000000000       0x71 ./main.o
+ .comment       0x0000000000000000       0x71 ./numpad.o
  .comment       0x0000000000000000       0x71 ./startup_frt.o
  .comment       0x0000000000000000       0x71 ./systick_frt.o
  .comment       0x0000000000000000       0x71 ./FRT_Library/FreeRTOS/Source/croutine.o
@@ -693,124 +771,151 @@ OUTPUT(freeRTOS_assignment7.out elf32-littlearm)
  .comment       0x0000000000000000       0x71 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
  .comment       0x0000000000000000       0x71 ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
 
-.debug_info     0x0000000000000000     0x23f3
- .debug_info    0x0000000000000000       0x95 ./adc.o
- .debug_info    0x0000000000000095      0x109 ./main.o
- .debug_info    0x000000000000019e      0x176 ./startup_frt.o
- .debug_info    0x0000000000000314       0xc6 ./systick_frt.o
- .debug_info    0x00000000000003da      0x479 ./FRT_Library/FreeRTOS/Source/croutine.o
- .debug_info    0x0000000000000853      0x28d ./FRT_Library/FreeRTOS/Source/list.o
- .debug_info    0x0000000000000ae0      0x789 ./FRT_Library/FreeRTOS/Source/queue.o
- .debug_info    0x0000000000001269      0xc6e ./FRT_Library/FreeRTOS/Source/tasks.o
- .debug_info    0x0000000000001ed7       0xa4 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/common.o
- .debug_info    0x0000000000001f7b      0x1ca ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
- .debug_info    0x0000000000002145      0x2ae ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
+.debug_info     0x0000000000000000     0x2844
+ .debug_info    0x0000000000000000       0xdb ./adc.o
+ .debug_info    0x00000000000000db       0xa4 ./gpio.o
+ .debug_info    0x000000000000017f      0x30b ./lcd.o
+ .debug_info    0x000000000000048a       0xc0 ./main.o
+ .debug_info    0x000000000000054a       0xa5 ./numpad.o
+ .debug_info    0x00000000000005ef      0x176 ./startup_frt.o
+ .debug_info    0x0000000000000765       0xc6 ./systick_frt.o
+ .debug_info    0x000000000000082b      0x479 ./FRT_Library/FreeRTOS/Source/croutine.o
+ .debug_info    0x0000000000000ca4      0x28d ./FRT_Library/FreeRTOS/Source/list.o
+ .debug_info    0x0000000000000f31      0x789 ./FRT_Library/FreeRTOS/Source/queue.o
+ .debug_info    0x00000000000016ba      0xc6e ./FRT_Library/FreeRTOS/Source/tasks.o
+ .debug_info    0x0000000000002328       0xa4 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/common.o
+ .debug_info    0x00000000000023cc      0x1ca ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
+ .debug_info    0x0000000000002596      0x2ae ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
 
-.debug_abbrev   0x0000000000000000      0x996
- .debug_abbrev  0x0000000000000000       0x4c ./adc.o
- .debug_abbrev  0x000000000000004c       0x97 ./main.o
- .debug_abbrev  0x00000000000000e3       0xca ./startup_frt.o
- .debug_abbrev  0x00000000000001ad       0x4a ./systick_frt.o
- .debug_abbrev  0x00000000000001f7      0x175 ./FRT_Library/FreeRTOS/Source/croutine.o
- .debug_abbrev  0x000000000000036c       0xb6 ./FRT_Library/FreeRTOS/Source/list.o
- .debug_abbrev  0x0000000000000422      0x140 ./FRT_Library/FreeRTOS/Source/queue.o
- .debug_abbrev  0x0000000000000562      0x16f ./FRT_Library/FreeRTOS/Source/tasks.o
- .debug_abbrev  0x00000000000006d1       0x6d ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/common.o
- .debug_abbrev  0x000000000000073e       0xfc ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
- .debug_abbrev  0x000000000000083a      0x15c ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
+.debug_abbrev   0x0000000000000000      0xb9b
+ .debug_abbrev  0x0000000000000000       0x98 ./adc.o
+ .debug_abbrev  0x0000000000000098       0x5b ./gpio.o
+ .debug_abbrev  0x00000000000000f3      0x120 ./lcd.o
+ .debug_abbrev  0x0000000000000213       0x69 ./main.o
+ .debug_abbrev  0x000000000000027c       0x6c ./numpad.o
+ .debug_abbrev  0x00000000000002e8       0xca ./startup_frt.o
+ .debug_abbrev  0x00000000000003b2       0x4a ./systick_frt.o
+ .debug_abbrev  0x00000000000003fc      0x175 ./FRT_Library/FreeRTOS/Source/croutine.o
+ .debug_abbrev  0x0000000000000571       0xb6 ./FRT_Library/FreeRTOS/Source/list.o
+ .debug_abbrev  0x0000000000000627      0x140 ./FRT_Library/FreeRTOS/Source/queue.o
+ .debug_abbrev  0x0000000000000767      0x16f ./FRT_Library/FreeRTOS/Source/tasks.o
+ .debug_abbrev  0x00000000000008d6       0x6d ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/common.o
+ .debug_abbrev  0x0000000000000943       0xfc ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
+ .debug_abbrev  0x0000000000000a3f      0x15c ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
 
-.debug_aranges  0x0000000000000000      0x3d0
+.debug_aranges  0x0000000000000000      0x4a8
  .debug_aranges
-                0x0000000000000000       0x20 ./adc.o
+                0x0000000000000000       0x28 ./adc.o
  .debug_aranges
-                0x0000000000000020       0x30 ./main.o
+                0x0000000000000028       0x20 ./gpio.o
  .debug_aranges
-                0x0000000000000050       0x38 ./startup_frt.o
+                0x0000000000000048       0x88 ./lcd.o
  .debug_aranges
-                0x0000000000000088       0x30 ./systick_frt.o
+                0x00000000000000d0       0x30 ./main.o
  .debug_aranges
-                0x00000000000000b8       0x50 ./FRT_Library/FreeRTOS/Source/croutine.o
+                0x0000000000000100       0x28 ./numpad.o
  .debug_aranges
-                0x0000000000000108       0x40 ./FRT_Library/FreeRTOS/Source/list.o
+                0x0000000000000128       0x38 ./startup_frt.o
  .debug_aranges
-                0x0000000000000148       0xa8 ./FRT_Library/FreeRTOS/Source/queue.o
+                0x0000000000000160       0x30 ./systick_frt.o
  .debug_aranges
-                0x00000000000001f0      0x118 ./FRT_Library/FreeRTOS/Source/tasks.o
+                0x0000000000000190       0x50 ./FRT_Library/FreeRTOS/Source/croutine.o
  .debug_aranges
-                0x0000000000000308       0x20 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/common.o
+                0x00000000000001e0       0x40 ./FRT_Library/FreeRTOS/Source/list.o
  .debug_aranges
-                0x0000000000000328       0x70 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
+                0x0000000000000220       0xa8 ./FRT_Library/FreeRTOS/Source/queue.o
  .debug_aranges
-                0x0000000000000398       0x38 ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
+                0x00000000000002c8      0x118 ./FRT_Library/FreeRTOS/Source/tasks.o
+ .debug_aranges
+                0x00000000000003e0       0x20 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/common.o
+ .debug_aranges
+                0x0000000000000400       0x70 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
+ .debug_aranges
+                0x0000000000000470       0x38 ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
 
-.debug_ranges   0x0000000000000000      0x320
- .debug_ranges  0x0000000000000000       0x10 ./adc.o
- .debug_ranges  0x0000000000000010       0x20 ./main.o
- .debug_ranges  0x0000000000000030       0x28 ./startup_frt.o
- .debug_ranges  0x0000000000000058       0x20 ./systick_frt.o
- .debug_ranges  0x0000000000000078       0x40 ./FRT_Library/FreeRTOS/Source/croutine.o
- .debug_ranges  0x00000000000000b8       0x30 ./FRT_Library/FreeRTOS/Source/list.o
- .debug_ranges  0x00000000000000e8       0x98 ./FRT_Library/FreeRTOS/Source/queue.o
- .debug_ranges  0x0000000000000180      0x108 ./FRT_Library/FreeRTOS/Source/tasks.o
- .debug_ranges  0x0000000000000288       0x10 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/common.o
- .debug_ranges  0x0000000000000298       0x60 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
- .debug_ranges  0x00000000000002f8       0x28 ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
+.debug_ranges   0x0000000000000000      0x3c8
+ .debug_ranges  0x0000000000000000       0x18 ./adc.o
+ .debug_ranges  0x0000000000000018       0x10 ./gpio.o
+ .debug_ranges  0x0000000000000028       0x78 ./lcd.o
+ .debug_ranges  0x00000000000000a0       0x20 ./main.o
+ .debug_ranges  0x00000000000000c0       0x18 ./numpad.o
+ .debug_ranges  0x00000000000000d8       0x28 ./startup_frt.o
+ .debug_ranges  0x0000000000000100       0x20 ./systick_frt.o
+ .debug_ranges  0x0000000000000120       0x40 ./FRT_Library/FreeRTOS/Source/croutine.o
+ .debug_ranges  0x0000000000000160       0x30 ./FRT_Library/FreeRTOS/Source/list.o
+ .debug_ranges  0x0000000000000190       0x98 ./FRT_Library/FreeRTOS/Source/queue.o
+ .debug_ranges  0x0000000000000228      0x108 ./FRT_Library/FreeRTOS/Source/tasks.o
+ .debug_ranges  0x0000000000000330       0x10 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/common.o
+ .debug_ranges  0x0000000000000340       0x60 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
+ .debug_ranges  0x00000000000003a0       0x28 ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
 
-.debug_line     0x0000000000000000     0x1936
- .debug_line    0x0000000000000000      0x122 ./adc.o
- .debug_line    0x0000000000000122      0x152 ./main.o
- .debug_line    0x0000000000000274      0x15d ./startup_frt.o
- .debug_line    0x00000000000003d1      0x14b ./systick_frt.o
- .debug_line    0x000000000000051c      0x2b2 ./FRT_Library/FreeRTOS/Source/croutine.o
- .debug_line    0x00000000000007ce      0x223 ./FRT_Library/FreeRTOS/Source/list.o
- .debug_line    0x00000000000009f1      0x445 ./FRT_Library/FreeRTOS/Source/queue.o
- .debug_line    0x0000000000000e36      0x60a ./FRT_Library/FreeRTOS/Source/tasks.o
- .debug_line    0x0000000000001440      0x114 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/common.o
- .debug_line    0x0000000000001554      0x29b ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
- .debug_line    0x00000000000017ef      0x147 ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
+.debug_line     0x0000000000000000     0x1cda
+ .debug_line    0x0000000000000000      0x141 ./adc.o
+ .debug_line    0x0000000000000141      0x11e ./gpio.o
+ .debug_line    0x000000000000025f      0x306 ./lcd.o
+ .debug_line    0x0000000000000565       0x66 ./main.o
+ .debug_line    0x00000000000005cb       0x4d ./numpad.o
+ .debug_line    0x0000000000000618      0x15d ./startup_frt.o
+ .debug_line    0x0000000000000775      0x14b ./systick_frt.o
+ .debug_line    0x00000000000008c0      0x2b2 ./FRT_Library/FreeRTOS/Source/croutine.o
+ .debug_line    0x0000000000000b72      0x223 ./FRT_Library/FreeRTOS/Source/list.o
+ .debug_line    0x0000000000000d95      0x445 ./FRT_Library/FreeRTOS/Source/queue.o
+ .debug_line    0x00000000000011da      0x60a ./FRT_Library/FreeRTOS/Source/tasks.o
+ .debug_line    0x00000000000017e4      0x114 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/common.o
+ .debug_line    0x00000000000018f8      0x29b ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
+ .debug_line    0x0000000000001b93      0x147 ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
 
-.debug_str      0x0000000000000000     0x134b
- .debug_str     0x0000000000000000      0x1c9 ./adc.o
-                                        0x206 (size before relaxing)
- .debug_str     0x00000000000001c9       0x48 ./main.o
-                                        0x23d (size before relaxing)
- .debug_str     0x0000000000000211       0x90 ./startup_frt.o
+.debug_str      0x0000000000000000     0x1497
+ .debug_str     0x0000000000000000      0x1d8 ./adc.o
+                                        0x215 (size before relaxing)
+ .debug_str     0x00000000000001d8       0x19 ./gpio.o
+                                        0x20e (size before relaxing)
+ .debug_str     0x00000000000001f1      0x125 ./lcd.o
+                                        0x326 (size before relaxing)
+ .debug_str     0x0000000000000316       0x25 ./main.o
+                                        0x21c (size before relaxing)
+ .debug_str     0x000000000000033b       0x22 ./numpad.o
+                                        0x203 (size before relaxing)
+ .debug_str     0x000000000000035d       0x90 ./startup_frt.o
                                         0x28e (size before relaxing)
- .debug_str     0x00000000000002a1       0x43 ./systick_frt.o
+ .debug_str     0x00000000000003ed       0x43 ./systick_frt.o
                                         0x245 (size before relaxing)
- .debug_str     0x00000000000002e4      0x35a ./FRT_Library/FreeRTOS/Source/croutine.o
+ .debug_str     0x0000000000000430      0x35a ./FRT_Library/FreeRTOS/Source/croutine.o
                                         0x515 (size before relaxing)
- .debug_str     0x000000000000063e       0xb9 ./FRT_Library/FreeRTOS/Source/list.o
+ .debug_str     0x000000000000078a       0xb9 ./FRT_Library/FreeRTOS/Source/list.o
                                         0x346 (size before relaxing)
- .debug_str     0x00000000000006f7      0x36a ./FRT_Library/FreeRTOS/Source/queue.o
+ .debug_str     0x0000000000000843      0x36a ./FRT_Library/FreeRTOS/Source/queue.o
                                         0x615 (size before relaxing)
- .debug_str     0x0000000000000a61      0x5e4 ./FRT_Library/FreeRTOS/Source/tasks.o
+ .debug_str     0x0000000000000bad      0x5e4 ./FRT_Library/FreeRTOS/Source/tasks.o
                                         0x936 (size before relaxing)
- .debug_str     0x0000000000001045       0x5b ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/common.o
+ .debug_str     0x0000000000001191       0x5b ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/common.o
                                         0x226 (size before relaxing)
- .debug_str     0x00000000000010a0      0x142 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
+ .debug_str     0x00000000000011ec      0x142 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
                                         0x322 (size before relaxing)
- .debug_str     0x00000000000011e2      0x169 ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
+ .debug_str     0x000000000000132e      0x169 ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
                                         0x371 (size before relaxing)
 
-.debug_frame    0x0000000000000000      0xe74
- .debug_frame   0x0000000000000000       0x30 ./adc.o
- .debug_frame   0x0000000000000030       0x70 ./main.o
- .debug_frame   0x00000000000000a0       0x7c ./startup_frt.o
- .debug_frame   0x000000000000011c       0x70 ./systick_frt.o
- .debug_frame   0x000000000000018c      0x10c ./FRT_Library/FreeRTOS/Source/croutine.o
- .debug_frame   0x0000000000000298       0xd8 ./FRT_Library/FreeRTOS/Source/list.o
- .debug_frame   0x0000000000000370      0x2ac ./FRT_Library/FreeRTOS/Source/queue.o
- .debug_frame   0x000000000000061c      0x494 ./FRT_Library/FreeRTOS/Source/tasks.o
- .debug_frame   0x0000000000000ab0       0x30 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/common.o
- .debug_frame   0x0000000000000ae0      0x148 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
- .debug_frame   0x0000000000000c28       0x98 ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
- .debug_frame   0x0000000000000cc0       0x28 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-exit.o)
- .debug_frame   0x0000000000000ce8       0x2c /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-init.o)
- .debug_frame   0x0000000000000d14       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-memset.o)
- .debug_frame   0x0000000000000d48       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-strncpy.o)
- .debug_frame   0x0000000000000d7c       0x50 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-__call_atexit.o)
- .debug_frame   0x0000000000000dcc       0x20 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-atexit.o)
- .debug_frame   0x0000000000000dec       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-fini.o)
- .debug_frame   0x0000000000000e20       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-__atexit.o)
- .debug_frame   0x0000000000000e54       0x20 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libnosys.a(_exit.o)
+.debug_frame    0x0000000000000000     0x1118
+ .debug_frame   0x0000000000000000       0x4c ./adc.o
+ .debug_frame   0x000000000000004c       0x38 ./gpio.o
+ .debug_frame   0x0000000000000084      0x1f8 ./lcd.o
+ .debug_frame   0x000000000000027c       0x70 ./main.o
+ .debug_frame   0x00000000000002ec       0x58 ./numpad.o
+ .debug_frame   0x0000000000000344       0x7c ./startup_frt.o
+ .debug_frame   0x00000000000003c0       0x70 ./systick_frt.o
+ .debug_frame   0x0000000000000430      0x10c ./FRT_Library/FreeRTOS/Source/croutine.o
+ .debug_frame   0x000000000000053c       0xd8 ./FRT_Library/FreeRTOS/Source/list.o
+ .debug_frame   0x0000000000000614      0x2ac ./FRT_Library/FreeRTOS/Source/queue.o
+ .debug_frame   0x00000000000008c0      0x494 ./FRT_Library/FreeRTOS/Source/tasks.o
+ .debug_frame   0x0000000000000d54       0x30 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/common.o
+ .debug_frame   0x0000000000000d84      0x148 ./FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4/port.o
+ .debug_frame   0x0000000000000ecc       0x98 ./FRT_Library/FreeRTOS/Source/portable/MemMang/heap_2.o
+ .debug_frame   0x0000000000000f64       0x28 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-exit.o)
+ .debug_frame   0x0000000000000f8c       0x2c /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-init.o)
+ .debug_frame   0x0000000000000fb8       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-memset.o)
+ .debug_frame   0x0000000000000fec       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-strncpy.o)
+ .debug_frame   0x0000000000001020       0x50 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-__call_atexit.o)
+ .debug_frame   0x0000000000001070       0x20 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-atexit.o)
+ .debug_frame   0x0000000000001090       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-fini.o)
+ .debug_frame   0x00000000000010c4       0x34 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a(lib_a-__atexit.o)
+ .debug_frame   0x00000000000010f8       0x20 /Applications/TI/ccsv7/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/libnosys.a(_exit.o)
