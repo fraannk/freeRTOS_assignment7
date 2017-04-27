@@ -11,4 +11,7 @@
 /***************************** Include files *******************************/
 #include "emp_type.h"
 
+void initLCD();
+void dispLCD(void *p);
+
 #endif
