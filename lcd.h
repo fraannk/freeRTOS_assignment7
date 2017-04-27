@@ -10,8 +10,16 @@
 
 /***************************** Include files *******************************/
 #include "emp_type.h"
+#include "FreeRTOS.h"
+#include "queue.h"
+
+extern xQueueHandle queue;
 
 void initLCD();
 void dispLCD(void *p);
+void delay();
+void LCD_write_data(INT8U byte);
+void setCursor(INT8U col, INT8U row);
+void clearLCD();
 
 #endif

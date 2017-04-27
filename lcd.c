@@ -9,6 +9,8 @@
 #include "tm4c123gh6pm.h"
 #include "lcd.h"
 #include "emp_type.h"
+#include "FreeRTOS.h"
+#include "queue.h"
 
 /*****************************    Defines    *******************************/
 #define     LCD_DATA_PORT           GPIO_PORTC_DATA_R
@@ -69,7 +71,7 @@ void lcd_write_instruction(INT8U byte)
   delay();
 }
 
-LCD_write_data(INT8U byte){
+void LCD_write_data(INT8U byte){
     LCD_CTRL_PORT |= (1<<LCD_RS_PIN);
     LCD_CTRL_PORT &= ~(1<<LCD_E_PIN);
     lcd_write_nibble(byte);
@@ -121,14 +123,54 @@ void initLCD(){
 
 }
 
-void dispLCD(void *p) {
-    while(1) {
-        int k;
+void clearLCD(void)
+{
+  lcd_write_instruction(0x01);
+  delay();
+}
 
-        for(k=0b00; k<11111111;k++){
-            delay();
+void setCursor(INT8U x, INT8U y)
+{
+  INT8U adr = 0x80;
+  adr |= (y*0x40 + x);
+  lcd_write_instruction(adr);
+}
 
-            LCD_write_data(k);
-        }
+/*
+void dispString(INT8U string[])
+{
+    INT8U i = 0;
+    while( string[i] != 0) {
+        LCD_write_data(string[i++]);
     }
 }
+*/
+
+void dispLCD(void *p) {
+    setCursor(5, 0);
+    LCD_write_data(83);
+    LCD_write_data(111);
+    LCD_write_data(114);
+    LCD_write_data(101);
+    LCD_write_data(110);
+    clearLCD();
+    setCursor(5, 1);
+    LCD_write_data(83);
+    LCD_write_data(111);
+    LCD_write_data(114);
+    LCD_write_data(101);
+    LCD_write_data(110);
+    clearLCD();
+    setCursor(0, 0);
+
+    while(1) {
+        char *rx;
+
+        xQueueReceive(queue, &rx, 10);
+        rx = rx + 48;
+        LCD_write_data(rx);
+        vTaskDelay(10);
+        clearLCD();
+    }
+}
+

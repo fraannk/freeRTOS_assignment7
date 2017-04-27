@@ -8,6 +8,11 @@
 #ifndef ADC_H_
 #define ADC_H_
 
+#include "FreeRTOS.h"
+#include "queue.h"
+
+extern xQueueHandle queue;
+
 void initADC(void);
 /*****************************************************************************
 *   Input    : -

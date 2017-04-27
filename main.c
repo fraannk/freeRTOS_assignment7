@@ -38,7 +38,8 @@
 #define HIGH_PRIO 3
 
 #define QUEUE_SIZE 5
-#define QUEUE_ITEM_SIZE sizeof(int)
+#define QUEUE_ITEM_SIZE sizeof(INT8U)
+xQueueHandle queue;
 
 
 /*****************************   Constants   *******************************/
@@ -86,9 +87,7 @@ int main(void)
     setupHardware();
 
     // Start the tasks.
-    xQueueHandle queue;
-        /* Create the queue, storing the returned handle in the xQueue variable. */
-        queue = xQueueCreate(QUEUE_SIZE, QUEUE_ITEM_SIZE);
+    queue = xQueueCreate(QUEUE_SIZE, QUEUE_ITEM_SIZE);
         if(queue == NULL)
         {
             /* The queue could not be created. */
