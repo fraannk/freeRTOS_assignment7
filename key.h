@@ -1,27 +1,22 @@
-/*****************************************************************************
-* University of Southern Denmark
-* Embedded Programming (EMP)
-*
-* MODULENAME.: key.h
-*
-* PROJECT....: EMP
-*
-* DESCRIPTION: Test.
-*
-* Change Log:
-******************************************************************************
-* Date    Id    Change
-* YYMMDD
-* --------------------
-* 150321  MoH   Module created.
-*
-*****************************************************************************/
+/*
+ * key.c
+ *
+ *  Created on: 28. apr. 2017
+ *      Author: fraannk
+ */
 
 #ifndef _KEY_H
   #define _KEY_H
 
-//BOOLEAN get_keyboard( INT8U* );
-extern void key_task(INT8U, INT8U, INT8U, INT8U );
+#include "emp_type.h"
+#include "FreeRTOS.h"
+#include "queue.h"
 
+void readKey(void *p);
+void initKeyboard();
+
+extern xQueueHandle scale_queue;
+extern char offset_value;
+extern char scale_value;
 
 #endif

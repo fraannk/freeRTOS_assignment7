@@ -38,9 +38,10 @@
 #define HIGH_PRIO 3
 
 #define QUEUE_SIZE 5
-#define QUEUE_ITEM_SIZE sizeof(INT8U)
-xQueueHandle queue;
-
+#define QUEUE_ITEM_SIZE sizeof(uint32_t)
+#define QUEUE_ITEM_SIZE_SCALE sizeof(char)
+xQueueHandle adc_queue;
+xQueueHandle scale_queue;
 
 /*****************************   Constants   *******************************/
 
@@ -69,6 +70,7 @@ static void setupHardware(void)
     // TODO: Put hardware configuration and initialisation in here
     initGPIO();
     initADC();
+    initKeyboard();
     initLCD();
 
     //initNumpad();
@@ -87,22 +89,27 @@ int main(void)
     setupHardware();
 
     // Start the tasks.
-    queue = xQueueCreate(QUEUE_SIZE, QUEUE_ITEM_SIZE);
-        if(queue == NULL)
-        {
-            /* The queue could not be created. */
-            GPIO_PORTF_DATA_R = 0b0000;
+    adc_queue = xQueueCreate(QUEUE_SIZE, QUEUE_ITEM_SIZE);
+    if(adc_queue == NULL) {
+        /* The queue could not be created. */
+        GPIO_PORTF_DATA_R = 0b0000;
     }
-        GPIO_PORTF_DATA_R = 0b1110;
+    /* Successful */
+    GPIO_PORTF_DATA_R = 0b1110;
+
+    scale_queue = xQueueCreate(QUEUE_SIZE, QUEUE_ITEM_SIZE_SCALE);
+    if(scale_queue == NULL) {
+        /* The queue could not be created. */
+        GPIO_PORTF_DATA_R = 0b0000;
+    }
+    /* Successful */
+    GPIO_PORTF_DATA_R = 0b1110;
 
     // ----------------
 
     xTaskCreate(im_alive, (signed char*) "alive", USERTASK_STACK_SIZE, NULL, HIGH_PRIO, NULL);
+    xTaskCreate(readKey, (signed char*) "readKey", USERTASK_STACK_SIZE, NULL, HIGH_PRIO, NULL);
     xTaskCreate(readADC, (signed char*) "readADC", USERTASK_STACK_SIZE, NULL, HIGH_PRIO, NULL);
-
-    //xTaskCreate(readKey, (signed char*) "readKey", USERTASK_STACK_SIZE, NULL, HIGH_PRIO, NULL);
-    //xTaskCreate(addNumbers, (signed char*) "addNumbers", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
-    //xTaskCreate(makeUI, (signed char*) "makeUI", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
     xTaskCreate(dispLCD, (signed char*) "dispLCD", USERTASK_STACK_SIZE, NULL, HIGH_PRIO, NULL);
 
     // Start the scheduler.

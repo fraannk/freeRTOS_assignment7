@@ -1,105 +1,73 @@
-/*****************************************************************************
-* University of Southern Denmark
-* Embedded Programming (EMP)
-*
-* MODULENAME.: key.c
-*
-* PROJECT....: EMP
-*
-* DESCRIPTION: See module specification file (.h-file).
-*
-* Change Log:
-*****************************************************************************
-* Date    Id    Change
-* YYMMDD
-* --------------------
-* 150321  MoH   Module created.
-*
-*****************************************************************************/
+/*
+ * key.c
+ *
+ *  Created on: 28. apr. 2017
+ *      Author: simon
+ */
 
-/***************************** Include files *******************************/
-#include <stdint.h>
 #include "tm4c123gh6pm.h"
 #include "emp_type.h"
+#include <stdint.h>
+#include "key.h"
 
-INT8U row( INT8U y )
-{
-  INT8U result = 0;
+void initKeyboard(){
+    GPIO_PORTE_DIR_R = 0x00; // make KEY H G J K inputs by clearing bits
+    GPIO_PORTA_DIR_R = 0b00011100; // make KEY E F D output by setting bits
+    GPIO_PORTE_DEN_R = 0b00001111; // Digital enable KEY H G J K
+    GPIO_PORTA_DEN_R = 0b00011100; // Digital enable KEY D E F
+}
 
-  switch( y )
-  {
-    case 0x01: result = 1; break;
-    case 0x02: result = 2; break;
-    case 0x04: result = 3; break;
-    case 0x08: result = 4; break;
-  }
-  return( result );
+
+void readKey(void *p){
+    char button_pressed;
+    while(1) {
+        GPIO_PORTA_DATA_R = 0b000010000; // A logic high signal is given to col1-col3
+        if((GPIO_PORTA_DATA_R == 0b000010000) && (GPIO_PORTE_DATA_R == 0b00001000) ){
+            button_pressed = '1';
+        }
+        if((GPIO_PORTA_DATA_R == 0b000010000) && (GPIO_PORTE_DATA_R == 0b00000100) ){
+            button_pressed = '4';
+        }
+        if((GPIO_PORTA_DATA_R == 0b000010000) && (GPIO_PORTE_DATA_R == 0b00000010) ){
+            button_pressed = '7';
+        }
+        if((GPIO_PORTA_DATA_R == 0b000010000) && (GPIO_PORTE_DATA_R == 0b00000001) ){
+            button_pressed = '*';
+        }
+
+        GPIO_PORTA_DATA_R = 0b000001000; // A logic high signal is given to col1-col3
+        if((GPIO_PORTA_DATA_R == 0b000001000) && (GPIO_PORTE_DATA_R == 0b00001000) ){
+            button_pressed = '2';
+        }
+        if((GPIO_PORTA_DATA_R == 0b000001000) && (GPIO_PORTE_DATA_R == 0b00000100) ){
+            button_pressed = '5';
+        }
+        if((GPIO_PORTA_DATA_R == 0b000001000) && (GPIO_PORTE_DATA_R == 0b00000010) ){
+            button_pressed = '8';
+        }
+        if((GPIO_PORTA_DATA_R == 0b000001000) && (GPIO_PORTE_DATA_R == 0b00000001) ){
+            button_pressed = '0';
+        }
+
+        GPIO_PORTA_DATA_R = 0b000000100; // A logic high signal is given to col1-col3
+        if((GPIO_PORTA_DATA_R == 0b000000100) && (GPIO_PORTE_DATA_R == 0b00001000) ){
+            button_pressed = '3';
+        }
+        if((GPIO_PORTA_DATA_R == 0b000000100) && (GPIO_PORTE_DATA_R == 0b00000100) ){
+            button_pressed = '6';
+        }
+        if((GPIO_PORTA_DATA_R == 0b000000100) && (GPIO_PORTE_DATA_R == 0b00000010) ){
+            button_pressed = '9';
+        }
+        if((GPIO_PORTA_DATA_R == 0b000000100) && (GPIO_PORTE_DATA_R == 0b00000001) ){
+            button_pressed = '#';
+        }
+
+        xQueueSend(scale_queue, &button_pressed, 5);
+        vTaskDelay(5);
+    }
+
 }
 
 
 
-INT8U key_catch( x, y )
-INT8U x, y;
-{
-  const INT8U matrix[3][4] = {{'#','9','6','3'},
-                              {'0','8','5','2'},
-                              {'*','7','4','1'}};
-
-  return( matrix[x-1][y-1] );
-
-}
-
-/*
-BOOLEAN get_keyboard( INT8U *pch )
-{
-  return( get_queue( Q_KEY, pch, WAIT_FOREVER ));
-}
-*/
-
-extern void key_task(INT8U my_id, INT8U my_state, INT8U event, INT8U data)
-/*****************************************************************************
-*   Input    :
-*   Output   :
-*   Function :
-******************************************************************************/
-{
-  INT8U y;
-  INT8U ch;
-  static INT8U x = 1;
-
-  switch( my_state )
-  {
-    case 0:
-      GPIO_PORTA_DATA_R |= 0x04;
-      GPIO_PORTF_DATA_R |= 0x0E;
-      //set_state( 1 );
-
-      break;
-    case 1:
-      y = GPIO_PORTE_DATA_R & 0x0F;
-      if( y )
-      {
-        GPIO_PORTF_DATA_R &= 0xFD;
-        ch = key_catch( x, row(y) );
-        //put_queue( Q_KEY, ch, 1 );
-        //set_state( 2 );
-      }
-      else
-      {
-        x++;
-        if( x > 3 )
-          x = 1;
-        GPIO_PORTA_DATA_R &= 0xE3;
-        GPIO_PORTA_DATA_R |= ( 0x01 << (x+1 ));
-      }
-      break;
-    case 2:
-      if( !(GPIO_PORTE_DATA_R & 0x0F ))
-      {
-        x=1;
-        GPIO_PORTA_DATA_R |= 0x04;
-        //set_state( 1 );
-      }
-      break;
-  }
-}

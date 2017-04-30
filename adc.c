@@ -29,7 +29,7 @@ void readADC(void *p) {
 
         result = ADC1_SSFIFO3_R; //Read ADC and add it to result
 
-        xQueueSend(queue, &result, 10);
+        xQueueSend(adc_queue, &result, 5);
 
         if(result<1365){
             GPIO_PORTF_DATA_R = 0b0110;
@@ -38,6 +38,5 @@ void readADC(void *p) {
         } else if(result>2730) {
             GPIO_PORTF_DATA_R = 0b1100;
         }
-        vTaskDelay(10);
     }
 }

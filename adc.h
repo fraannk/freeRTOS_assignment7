@@ -11,7 +11,7 @@
 #include "FreeRTOS.h"
 #include "queue.h"
 
-extern xQueueHandle queue;
+extern xQueueHandle adc_queue;
 
 void initADC(void);
 /*****************************************************************************
