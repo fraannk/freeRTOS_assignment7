@@ -27,12 +27,11 @@
 #define     LCD_RS_PIN              2
 #define     LCD_E_PIN               3
 /*****************************   Constants   *******************************/
-typedef enum {HIGH, LOW} pin_state;
 
 void delay(){
     int i;
-    for(i = 0; i<=10000; i++)
-        i;
+    for(i = 0; i<=10000; i++){}
+        //i;
 }
 
 void lcd_write_nibble(INT8U byte){

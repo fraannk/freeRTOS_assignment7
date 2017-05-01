@@ -54,10 +54,6 @@
 									<listOptionValue builtIn="false" value="&quot;/Users/fraannk/Documents/SDU/Elektronik- og datateknik/4. Semester/Embedded programming/CCS Projects/freeRTOS_assignment7/FRT_Library/FreeRTOS/Source/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;/Users/fraannk/Documents/SDU/Elektronik- og datateknik/4. Semester/Embedded programming/CCS Projects/freeRTOS_assignment7/FRT_Library/FreeRTOS/Source/portable/GCC/ARM_CM4&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;/Users/fraannk/Documents/SDU/Elektronik- og datateknik/4. Semester/Embedded programming/Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Desktop\Universitet\4_semester\Embedded_programmering\assignments\Assignment7&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Desktop\Universitet\4_semester\Embedded_programmering\assignments\Assignment7\FRT_Library\FreeRTOS\Source\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Desktop\Universitet\4_semester\Embedded_programmering\FreeRTOS\FRT_Library\FreeRTOS\Source\portable\GCC\ARM_CM4&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Desktop\Universitet\4_semester\Embedded_programmering\include&quot;"/>
 								</option>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_4.0.compilerID.SPECS.988540021" name="Override built-in specs with the contents of the specified file (-specs)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_4.0.compilerID.SPECS" useByScannerDiscovery="false" value="&quot;nosys.specs&quot;" valueType="string"/>
 								<inputType id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_4.0.compiler.inputType__C_SRCS.747536243" name="C Sources" superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_4.0.compiler.inputType__C_SRCS"/>
